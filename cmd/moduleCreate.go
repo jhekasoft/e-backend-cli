@@ -27,7 +27,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/jhekasoft/e-backend-cli/internal/boilerplate"
+	"github.com/jhekasoft/e-backend-cli/boilerplate"
 )
 
 // moduleCreateCmd represents the moduleCreate command
@@ -47,7 +47,8 @@ var moduleCreateCmd = &cobra.Command{
 
 		modulesPath := "modules"
 		restDocPath := "modules/doc/data/public/restapi/openapi"
-		bp := boilerplate.NewModuleBoilerplate(name, template, modulesPath, restDocPath)
+		bp, err := boilerplate.NewModuleBoilerplate(name, template, modulesPath, restDocPath)
+		cobra.CheckErr(err)
 		result, err := bp.Create()
 		cobra.CheckErr(err)
 

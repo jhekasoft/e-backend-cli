@@ -24,28 +24,28 @@ func (b *CRUDModuleBoilerplate) Create() (string, error) {
 
 	tmplData := NewModuleTmplData(b.Name)
 
-	schemasTmplPath := path.Join(b.GetModuleTemplatesPath(), tmplTypeName, "schemas.yml.tmpl")
+	schemasTmplPath := path.Join(moduleTemplatesPath, tmplTypeName, "schemas.yml.tmpl")
 	schemasFilePath := path.Join(b.GetModuleRESTDocPath(), "schemas.yml")
 	err = b.CreateFileFromTemplate(schemasTmplPath, schemasFilePath, tmplData)
 	if err != nil {
 		return "", err
 	}
 
-	resourceTmplPath := path.Join(b.GetModuleTemplatesPath(), tmplTypeName, "resource.yml.tmpl")
+	resourceTmplPath := path.Join(moduleTemplatesPath, tmplTypeName, "resource.yml.tmpl")
 	resourceFilePath := path.Join(b.GetModuleRESTDocPath(), fmt.Sprintf("%s.yml", b.Name))
 	err = b.CreateFileFromTemplate(resourceTmplPath, resourceFilePath, tmplData)
 	if err != nil {
 		return "", err
 	}
 
-	resourceIDTmplPath := path.Join(b.GetModuleTemplatesPath(), tmplTypeName, "resource-id.yml.tmpl")
+	resourceIDTmplPath := path.Join(moduleTemplatesPath, tmplTypeName, "resource-id.yml.tmpl")
 	resourceIDFilePath := path.Join(b.GetModuleRESTDocPath(), fmt.Sprintf("%s-id.yml", b.Name))
 	err = b.CreateFileFromTemplate(resourceIDTmplPath, resourceIDFilePath, tmplData)
 	if err != nil {
 		return "", err
 	}
 
-	openAPIPartPath := path.Join(b.GetModuleTemplatesPath(), tmplTypeName, "openapi-part.yml.tmpl")
+	openAPIPartPath := path.Join(moduleTemplatesPath, tmplTypeName, "openapi-part.yml.tmpl")
 	openAPIPartRes, err := b.RenderFromTemplate(openAPIPartPath, tmplData)
 	if err != nil {
 		return "", err

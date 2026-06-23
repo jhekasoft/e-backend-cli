@@ -2,45 +2,45 @@ package boilerplate
 
 import (
 	"bytes"
+	"embed"
 	"fmt"
-	"log"
+	"io/fs"
 	"os"
 	"path"
-	"path/filepath"
 	"text/template"
 
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )
 
-const TemplatesPath = "internal/boilerplate/templates"
+const moduleTemplatesPath = "module"
+
+//go:embed templates/*
+var templatesFiles embed.FS
 
 type ModuleBoilerplate interface {
 	Create() (result string, err error)
 }
 
-func NewModuleBoilerplate(name, template, modulesPath, restDocPath string) ModuleBoilerplate {
+func NewModuleBoilerplate(name, template, modulesPath, restDocPath string) (ModuleBoilerplate, error) {
+	templatesFS, err := fs.Sub(templatesFiles, "templates")
+	if err != nil {
+		return nil, err
+	}
+
 	switch template {
 	case "crud":
-		return &CRUDModuleBoilerplate{CommonModuleBoilerplate{name, modulesPath, restDocPath}}
+		return &CRUDModuleBoilerplate{CommonModuleBoilerplate{templatesFS, name, modulesPath, restDocPath}}, nil
 	default:
-		return &SimpleModuleBoilerplate{CommonModuleBoilerplate{name, modulesPath, restDocPath}}
+		return &SimpleModuleBoilerplate{CommonModuleBoilerplate{templatesFS, name, modulesPath, restDocPath}}, nil
 	}
 }
 
 type CommonModuleBoilerplate struct {
+	TemplatesFS fs.FS
 	Name        string
 	ModulesPath string
 	RESTDocPath string
-}
-
-func (b *CommonModuleBoilerplate) GetModuleTemplatesPath() string {
-	exePath, err := os.Executable()
-	if err != nil {
-		// TODO: move logging upper
-		log.Fatalf("Error fetching executable path: %v", err)
-	}
-	return path.Join(filepath.Dir(exePath), TemplatesPath, "module")
 }
 
 func (b *CommonModuleBoilerplate) GetModulePath() string {
@@ -78,7 +78,7 @@ func (b *CommonModuleBoilerplate) CommonCreate(tmplTypeName string) error {
 			return err
 		}
 
-		tmplPath := path.Join(b.GetModuleTemplatesPath(), tmplTypeName, fmt.Sprintf("%s.go.tmpl", dir))
+		tmplPath := path.Join(moduleTemplatesPath, tmplTypeName, fmt.Sprintf("%s.go.tmpl", dir))
 		filePath := path.Join(b.GetModulePath(), dir, fmt.Sprintf("%s.go", dir))
 		err = b.CreateFileFromTemplate(tmplPath, filePath, NewModuleTmplData(b.Name))
 		if err != nil {
@@ -90,7 +90,7 @@ func (b *CommonModuleBoilerplate) CommonCreate(tmplTypeName string) error {
 }
 
 func (b *CommonModuleBoilerplate) CreateInitFile() error {
-	initTmplPath := path.Join(b.GetModuleTemplatesPath(), "init.go.tmpl")
+	initTmplPath := path.Join(moduleTemplatesPath, "init.go.tmpl")
 	initFilePath := path.Join(b.ModulesPath, fmt.Sprintf("%s.go", b.Name))
 	data := InitModuleTmplData{MdlName: b.Name}
 
@@ -124,7 +124,7 @@ func (b *CommonModuleBoilerplate) CreateInModuleDir(name string) error {
 }
 
 func (b *CommonModuleBoilerplate) CreateModuleFile(tmplTypeName string) error {
-	moduleTmplPath := path.Join(b.GetModuleTemplatesPath(), tmplTypeName, "module.go.tmpl")
+	moduleTmplPath := path.Join(moduleTemplatesPath, tmplTypeName, "module.go.tmpl")
 	moduleFilePath := path.Join(b.GetModulePath(), fmt.Sprintf("%s.go", b.Name))
 
 	return b.CreateFileFromTemplate(moduleTmplPath, moduleFilePath, NewModuleTmplData(b.Name))
@@ -137,7 +137,7 @@ func (b *CommonModuleBoilerplate) CreateFileFromTemplate(templateFilePath, fileP
 	}
 	defer file.Close()
 
-	tmpl, err := template.ParseFiles(templateFilePath)
+	tmpl, err := template.ParseFS(b.TemplatesFS, templateFilePath)
 	if err != nil {
 		return err
 	}
@@ -158,7 +158,7 @@ func (b *CommonModuleBoilerplate) CreateFileFromTemplate(templateFilePath, fileP
 }
 
 func (b *CommonModuleBoilerplate) RenderFromTemplate(templateFilePath string, data any) (string, error) {
-	tmpl, err := template.ParseFiles(templateFilePath)
+	tmpl, err := template.ParseFS(b.TemplatesFS, templateFilePath)
 	if err != nil {
 		return "", err
 	}
