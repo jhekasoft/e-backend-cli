@@ -1,10 +1,10 @@
 package boilerplate
 
-type SimpleModuleBoilerplate struct {
-	CommonModuleBoilerplate
+type SimpleModuleGenerator struct {
+	CommonModuleGenerator
 }
 
-func (b *SimpleModuleBoilerplate) Create() (string, error) {
+func (b *SimpleModuleGenerator) Create() (string, error) {
 	tmplTypeName := "simple"
 	err := b.CommonCreate(tmplTypeName)
 	if err != nil {

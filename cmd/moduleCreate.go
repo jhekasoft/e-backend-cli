@@ -30,7 +30,7 @@ import (
 	"github.com/spf13/cobra"
 	"golang.org/x/mod/modfile"
 
-	"github.com/jhekasoft/e-backend-cli/boilerplate"
+	moduleGenerator "github.com/jhekasoft/e-backend-cli/generator/module"
 )
 
 // moduleCreateCmd represents the moduleCreate command
@@ -54,7 +54,7 @@ var moduleCreateCmd = &cobra.Command{
 
 		modulesPath := "modules"
 		restDocPath := "modules/doc/data/public/restapi/openapi"
-		bp, err := boilerplate.NewModuleBoilerplate(pkgName, name, template, modulesPath, restDocPath)
+		bp, err := moduleGenerator.NewModuleGenerator(pkgName, name, template, modulesPath, restDocPath)
 		cobra.CheckErr(err)
 		result, err := bp.Create()
 		cobra.CheckErr(err)

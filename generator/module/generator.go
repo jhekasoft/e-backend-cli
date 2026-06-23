@@ -13,16 +13,14 @@ import (
 	"golang.org/x/text/language"
 )
 
-const moduleTemplatesPath = "module"
-
 //go:embed templates/*
 var templatesFiles embed.FS
 
-type ModuleBoilerplate interface {
+type ModuleGenerator interface {
 	Create() (result string, err error)
 }
 
-func NewModuleBoilerplate(pkgName, name, template, modulesPath, restDocPath string) (ModuleBoilerplate, error) {
+func NewModuleGenerator(pkgName, name, template, modulesPath, restDocPath string) (ModuleGenerator, error) {
 	templatesFS, err := fs.Sub(templatesFiles, "templates")
 	if err != nil {
 		return nil, err
@@ -30,17 +28,17 @@ func NewModuleBoilerplate(pkgName, name, template, modulesPath, restDocPath stri
 
 	switch template {
 	case "crud":
-		return &CRUDModuleBoilerplate{
-			CommonModuleBoilerplate{templatesFS, pkgName, name, modulesPath, restDocPath},
+		return &CRUDModuleGenerator{
+			CommonModuleGenerator{templatesFS, pkgName, name, modulesPath, restDocPath},
 		}, nil
 	default:
-		return &SimpleModuleBoilerplate{
-			CommonModuleBoilerplate{templatesFS, pkgName, name, modulesPath, restDocPath},
+		return &SimpleModuleGenerator{
+			CommonModuleGenerator{templatesFS, pkgName, name, modulesPath, restDocPath},
 		}, nil
 	}
 }
 
-type CommonModuleBoilerplate struct {
+type CommonModuleGenerator struct {
 	TemplatesFS fs.FS
 	PkgName     string
 	Name        string
@@ -48,15 +46,15 @@ type CommonModuleBoilerplate struct {
 	RESTDocPath string
 }
 
-func (b *CommonModuleBoilerplate) GetModulePath() string {
+func (b *CommonModuleGenerator) GetModulePath() string {
 	return path.Join(b.ModulesPath, b.Name)
 }
 
-func (b *CommonModuleBoilerplate) GetModuleRESTDocPath() string {
+func (b *CommonModuleGenerator) GetModuleRESTDocPath() string {
 	return path.Join(b.RESTDocPath, b.Name)
 }
 
-func (b *CommonModuleBoilerplate) CommonCreate(tmplTypeName string) error {
+func (b *CommonModuleGenerator) CommonCreate(tmplTypeName string) error {
 	// Create init file
 	err := b.CreateInitFile()
 	if err != nil {
@@ -83,7 +81,7 @@ func (b *CommonModuleBoilerplate) CommonCreate(tmplTypeName string) error {
 			return err
 		}
 
-		tmplPath := path.Join(moduleTemplatesPath, tmplTypeName, fmt.Sprintf("%s.go.tmpl", dir))
+		tmplPath := path.Join(tmplTypeName, fmt.Sprintf("%s.go.tmpl", dir))
 		filePath := path.Join(b.GetModulePath(), dir, fmt.Sprintf("%s.go", dir))
 		err = b.CreateFileFromTemplate(tmplPath, filePath, NewModuleTmplData(b.PkgName, b.Name))
 		if err != nil {
@@ -94,15 +92,15 @@ func (b *CommonModuleBoilerplate) CommonCreate(tmplTypeName string) error {
 	return nil
 }
 
-func (b *CommonModuleBoilerplate) CreateInitFile() error {
-	initTmplPath := path.Join(moduleTemplatesPath, "init.go.tmpl")
+func (b *CommonModuleGenerator) CreateInitFile() error {
+	initTmplPath := "init.go.tmpl"
 	initFilePath := path.Join(b.ModulesPath, fmt.Sprintf("%s.go", b.Name))
 	data := InitModuleTmplData{PkgName: b.PkgName, MdlName: b.Name}
 
 	return b.CreateFileFromTemplate(initTmplPath, initFilePath, data)
 }
 
-func (b *CommonModuleBoilerplate) CreateModuleDir() error {
+func (b *CommonModuleGenerator) CreateModuleDir() error {
 	// Create module directory
 	modulePath := b.GetModulePath()
 	if _, err := os.Stat(modulePath); os.IsNotExist(err) {
@@ -115,7 +113,7 @@ func (b *CommonModuleBoilerplate) CreateModuleDir() error {
 	return nil
 }
 
-func (b *CommonModuleBoilerplate) CreateInModuleDir(name string) error {
+func (b *CommonModuleGenerator) CreateInModuleDir(name string) error {
 	// Create directory in the module
 	inModulePath := path.Join(b.GetModulePath(), name)
 	if _, err := os.Stat(inModulePath); os.IsNotExist(err) {
@@ -128,14 +126,14 @@ func (b *CommonModuleBoilerplate) CreateInModuleDir(name string) error {
 	return nil
 }
 
-func (b *CommonModuleBoilerplate) CreateModuleFile(tmplTypeName string) error {
-	moduleTmplPath := path.Join(moduleTemplatesPath, tmplTypeName, "module.go.tmpl")
+func (b *CommonModuleGenerator) CreateModuleFile(tmplTypeName string) error {
+	moduleTmplPath := path.Join(tmplTypeName, "module.go.tmpl")
 	moduleFilePath := path.Join(b.GetModulePath(), fmt.Sprintf("%s.go", b.Name))
 
 	return b.CreateFileFromTemplate(moduleTmplPath, moduleFilePath, NewModuleTmplData(b.PkgName, b.Name))
 }
 
-func (b *CommonModuleBoilerplate) CreateFileFromTemplate(templateFilePath, filePath string, data any) error {
+func (b *CommonModuleGenerator) CreateFileFromTemplate(templateFilePath, filePath string, data any) error {
 	file, err := os.Create(filePath)
 	if err != nil {
 		return err
@@ -162,7 +160,7 @@ func (b *CommonModuleBoilerplate) CreateFileFromTemplate(templateFilePath, fileP
 	return nil
 }
 
-func (b *CommonModuleBoilerplate) RenderFromTemplate(templateFilePath string, data any) (string, error) {
+func (b *CommonModuleGenerator) RenderFromTemplate(templateFilePath string, data any) (string, error) {
 	tmpl, err := template.ParseFS(b.TemplatesFS, templateFilePath)
 	if err != nil {
 		return "", err
@@ -195,7 +193,7 @@ func NewModuleTmplData(pkgName, name string) ModuleTmplData {
 	}
 }
 
-func (b *CommonModuleBoilerplate) CreateRESTDocDir() error {
+func (b *CommonModuleGenerator) CreateRESTDocDir() error {
 	// Create module directory
 	restDocPath := b.GetModuleRESTDocPath()
 	if _, err := os.Stat(restDocPath); os.IsNotExist(err) {
