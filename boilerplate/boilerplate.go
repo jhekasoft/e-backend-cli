@@ -22,7 +22,7 @@ type ModuleBoilerplate interface {
 	Create() (result string, err error)
 }
 
-func NewModuleBoilerplate(name, template, modulesPath, restDocPath string) (ModuleBoilerplate, error) {
+func NewModuleBoilerplate(pkgName, name, template, modulesPath, restDocPath string) (ModuleBoilerplate, error) {
 	templatesFS, err := fs.Sub(templatesFiles, "templates")
 	if err != nil {
 		return nil, err
@@ -30,14 +30,19 @@ func NewModuleBoilerplate(name, template, modulesPath, restDocPath string) (Modu
 
 	switch template {
 	case "crud":
-		return &CRUDModuleBoilerplate{CommonModuleBoilerplate{templatesFS, name, modulesPath, restDocPath}}, nil
+		return &CRUDModuleBoilerplate{
+			CommonModuleBoilerplate{templatesFS, pkgName, name, modulesPath, restDocPath},
+		}, nil
 	default:
-		return &SimpleModuleBoilerplate{CommonModuleBoilerplate{templatesFS, name, modulesPath, restDocPath}}, nil
+		return &SimpleModuleBoilerplate{
+			CommonModuleBoilerplate{templatesFS, pkgName, name, modulesPath, restDocPath},
+		}, nil
 	}
 }
 
 type CommonModuleBoilerplate struct {
 	TemplatesFS fs.FS
+	PkgName     string
 	Name        string
 	ModulesPath string
 	RESTDocPath string
@@ -80,7 +85,7 @@ func (b *CommonModuleBoilerplate) CommonCreate(tmplTypeName string) error {
 
 		tmplPath := path.Join(moduleTemplatesPath, tmplTypeName, fmt.Sprintf("%s.go.tmpl", dir))
 		filePath := path.Join(b.GetModulePath(), dir, fmt.Sprintf("%s.go", dir))
-		err = b.CreateFileFromTemplate(tmplPath, filePath, NewModuleTmplData(b.Name))
+		err = b.CreateFileFromTemplate(tmplPath, filePath, NewModuleTmplData(b.PkgName, b.Name))
 		if err != nil {
 			return err
 		}
@@ -92,7 +97,7 @@ func (b *CommonModuleBoilerplate) CommonCreate(tmplTypeName string) error {
 func (b *CommonModuleBoilerplate) CreateInitFile() error {
 	initTmplPath := path.Join(moduleTemplatesPath, "init.go.tmpl")
 	initFilePath := path.Join(b.ModulesPath, fmt.Sprintf("%s.go", b.Name))
-	data := InitModuleTmplData{MdlName: b.Name}
+	data := InitModuleTmplData{PkgName: b.PkgName, MdlName: b.Name}
 
 	return b.CreateFileFromTemplate(initTmplPath, initFilePath, data)
 }
@@ -127,7 +132,7 @@ func (b *CommonModuleBoilerplate) CreateModuleFile(tmplTypeName string) error {
 	moduleTmplPath := path.Join(moduleTemplatesPath, tmplTypeName, "module.go.tmpl")
 	moduleFilePath := path.Join(b.GetModulePath(), fmt.Sprintf("%s.go", b.Name))
 
-	return b.CreateFileFromTemplate(moduleTmplPath, moduleFilePath, NewModuleTmplData(b.Name))
+	return b.CreateFileFromTemplate(moduleTmplPath, moduleFilePath, NewModuleTmplData(b.PkgName, b.Name))
 }
 
 func (b *CommonModuleBoilerplate) CreateFileFromTemplate(templateFilePath, filePath string, data any) error {
@@ -174,17 +179,17 @@ func (b *CommonModuleBoilerplate) RenderFromTemplate(templateFilePath string, da
 }
 
 type InitModuleTmplData struct {
-	MdlName string
+	PkgName, MdlName string
 }
 
 type ModuleTmplData struct {
-	MdlName    string
-	MdlNameCap string
+	PkgName, MdlName, MdlNameCap string
 }
 
-func NewModuleTmplData(name string) ModuleTmplData {
+func NewModuleTmplData(pkgName, name string) ModuleTmplData {
 	capitalizedName := cases.Title(language.English, cases.Compact).String(name)
 	return ModuleTmplData{
+		PkgName:    pkgName,
 		MdlName:    name,
 		MdlNameCap: capitalizedName,
 	}

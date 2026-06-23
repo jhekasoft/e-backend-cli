@@ -22,7 +22,7 @@ func (b *CRUDModuleBoilerplate) Create() (string, error) {
 		return "", err
 	}
 
-	tmplData := NewModuleTmplData(b.Name)
+	tmplData := NewModuleTmplData(b.PkgName, b.Name)
 
 	schemasTmplPath := path.Join(moduleTemplatesPath, tmplTypeName, "schemas.yml.tmpl")
 	schemasFilePath := path.Join(b.GetModuleRESTDocPath(), "schemas.yml")

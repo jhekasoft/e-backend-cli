@@ -2,9 +2,9 @@ package {{ .MdlName }}
 
 import (
 	internalModels "github.com/jhekasoft/e-backend/models"
-	"e-backend-boilerplate/modules/{{ .MdlName }}/handler"
-	"e-backend-boilerplate/modules/{{ .MdlName }}/repository"
-	"e-backend-boilerplate/modules/{{ .MdlName }}/service"
+	"{{ .PkgName }}/modules/{{ .MdlName }}/handler"
+	"{{ .PkgName }}/modules/{{ .MdlName }}/repository"
+	"{{ .PkgName }}/modules/{{ .MdlName }}/service"
 )
 
 type {{ .MdlNameCap }}Module struct {

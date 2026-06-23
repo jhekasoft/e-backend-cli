@@ -23,9 +23,12 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"errors"
 	"fmt"
+	"os"
 
 	"github.com/spf13/cobra"
+	"golang.org/x/mod/modfile"
 
 	"github.com/jhekasoft/e-backend-cli/boilerplate"
 )
@@ -45,9 +48,13 @@ var moduleCreateCmd = &cobra.Command{
 
 		fmt.Printf("Creating module '%s' with template '%s'\n", name, template)
 
+		// Read project package name (from go.mod)
+		pkgName, err := determineProjectPackageName()
+		cobra.CheckErr(err)
+
 		modulesPath := "modules"
 		restDocPath := "modules/doc/data/public/restapi/openapi"
-		bp, err := boilerplate.NewModuleBoilerplate(name, template, modulesPath, restDocPath)
+		bp, err := boilerplate.NewModuleBoilerplate(pkgName, name, template, modulesPath, restDocPath)
 		cobra.CheckErr(err)
 		result, err := bp.Create()
 		cobra.CheckErr(err)
@@ -62,4 +69,24 @@ func init() {
 	moduleCreateCmd.Flags().StringP("template", "t", "simple", `A module template to use.
 Available templates: simple, crud.`,
 	)
+}
+
+func determineProjectPackageName() (string, error) {
+	content, err := os.ReadFile("go.mod")
+	if err != nil {
+		return "", err
+	}
+
+	// Parse the file structure
+	ast, err := modfile.Parse("go.mod", content, nil)
+	if err != nil {
+		return "", err
+	}
+
+	// Access the module path statement directly
+	if ast.Module != nil {
+		return ast.Module.Mod.Path, nil
+	}
+
+	return "", errors.New("no module statement found in go.mod")
 }
