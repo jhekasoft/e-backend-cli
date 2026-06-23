@@ -1,0 +1,64 @@
+package handler
+
+import (
+	"github.com/jhekasoft/e-backend/crud"
+	"e-backend-boilerplate/modules/{{ .MdlName }}/models"
+)
+
+type Handler struct {
+	crud.Handler[
+		models.{{ .MdlNameCap }},
+		models.{{ .MdlNameCap }}ListFilter,
+		Create{{ .MdlNameCap }}Request,
+		Update{{ .MdlNameCap }}Request,
+		{{ .MdlNameCap }}ListFilter,
+	]
+}
+
+func NewHandler(service crud.CRUDService[models.{{ .MdlNameCap }}, models.{{ .MdlNameCap }}ListFilter]) *Handler {
+	return &Handler{
+		*crud.NewHandler[
+			models.{{ .MdlNameCap }},
+			models.{{ .MdlNameCap }}ListFilter,
+			Create{{ .MdlNameCap }}Request,
+			Update{{ .MdlNameCap }}Request,
+			{{ .MdlNameCap }}ListFilter,
+		](service),
+	}
+}
+
+type {{ .MdlNameCap }}ListFilter struct {
+	Offset int    `query:"Offset"`
+	Limit  int    `query:"Limit"`
+	Search string `query:"Search"`
+}
+
+func (req {{ .MdlNameCap }}ListFilter) ToFilter() models.{{ .MdlNameCap }}ListFilter {
+	return models.{{ .MdlNameCap }}ListFilter{
+		ListFilter: crud.ListFilter{
+			Offset: req.Offset,
+			Limit:  req.Limit,
+		},
+		Search: req.Search,
+	}
+}
+
+type Create{{ .MdlNameCap }}Request struct {
+	Name string
+}
+
+func (req Create{{ .MdlNameCap }}Request) ToModel() models.{{ .MdlNameCap }} {
+	return models.{{ .MdlNameCap }}{
+		Name: req.Name,
+	}
+}
+
+type Update{{ .MdlNameCap }}Request struct {
+	Name string `validate:"required"`
+}
+
+func (req Update{{ .MdlNameCap }}Request) ToModel() models.{{ .MdlNameCap }} {
+	return models.{{ .MdlNameCap }}{
+		Name: req.Name,
+	}
+}

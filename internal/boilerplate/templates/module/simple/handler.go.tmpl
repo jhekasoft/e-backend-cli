@@ -1,0 +1,28 @@
+package handler
+
+import (
+	"e-backend-boilerplate/modules/{{ .MdlName }}/service"
+	"net/http"
+
+	"github.com/labstack/echo/v4"
+)
+
+type (
+	Handler struct {
+		service *service.Service
+	}
+
+	{{ .MdlNameCap }}Response struct {
+		Result string `json:"result"`
+	}
+)
+
+func NewHandler(service *service.Service) *Handler {
+	return &Handler{service}
+}
+
+func (h *Handler) {{ .MdlNameCap }}(c echo.Context) error {
+	resp := {{ .MdlNameCap }}Response{Result: "Hello from {{ .MdlName }} module!"}
+
+	return c.JSON(http.StatusOK, resp)
+}

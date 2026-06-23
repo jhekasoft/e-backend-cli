@@ -1,0 +1,27 @@
+# e-backend
+
+`e-backend` CLI.
+
+![cat](./assets/android-chrome-192x192.png)
+
+```
+▗▄▄▄▖▗▄▄▖  ▗▄▖  ▗▄▄▖▗▖ ▗▖▗▄▄▄▖▗▖  ▗▖▗▄▄▄ 
+▐▌   ▐▌ ▐▌▐▌ ▐▌▐▌   ▐▌▗▞▘▐▌   ▐▛▚▖▐▌▐▌  █
+▐▛▀▀▘▐▛▀▚▖▐▛▀▜▌▐▌   ▐▛▚▖ ▐▛▀▀▘▐▌ ▝▜▌▐▌  █
+▐▙▄▄▖▐▙▄▞▘▐▌ ▐▌▝▚▄▄▖▐▌ ▐▌▐▙▄▄▖▐▌  ▐▌▐▙▄▄▀
+```
+
+## Installation
+
+```bash
+go install github.com/jhekasoft/e-backend-cli@latest
+```
+
+## Module generation
+
+```bash
+e-backend-cli module create [name] -t crud
+```
+
+Where `name` is name of module is `lowerCamelCase`, `-t` is template name
+(simple, crud).

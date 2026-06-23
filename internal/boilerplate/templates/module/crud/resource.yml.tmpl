@@ -1,0 +1,71 @@
+get:
+  tags:
+    - {{ .MdlNameCap }}
+  summary: Get items
+  description:
+    Get items with filtration
+  # security:
+  # - BearerAuth: []
+  parameters:
+  - name: offset
+    in: query
+    description: Offset for pagination
+    schema:
+      type: integer
+      default: 0
+  - name: limit
+    in: query
+    description: Limit for pagination
+    schema:
+      type: integer
+      default: 0
+      example: 10
+  - name: search
+    in: query
+    description: Search
+    schema:
+      type: string
+  responses:
+    200:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              Data:
+                type: array
+                items:
+                  $ref: "./schemas.yml#/schemas/{{ .MdlNameCap }}"
+              Offset:
+                type: integer
+                example: 0
+              Limit:
+                type: integer
+                example: 10
+              Total:
+                type: integer
+                example: 123
+
+post:
+  tags:
+  - {{ .MdlNameCap }}
+  summary: Create an item
+  description: Create an item
+  requestBody:
+    description: request body
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "./schemas.yml#/schemas/Create{{ .MdlNameCap }}Request"
+  responses:
+    200:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              Data:
+                $ref: "./schemas.yml#/schemas/{{ .MdlNameCap }}"

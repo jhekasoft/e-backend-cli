@@ -1,0 +1,32 @@
+package {{ .MdlName }}
+
+import (
+	internalModels "github.com/jhekasoft/e-backend/models"
+	"e-backend-boilerplate/modules/{{ .MdlName }}/handler"
+	"e-backend-boilerplate/modules/{{ .MdlName }}/repository"
+	"e-backend-boilerplate/modules/{{ .MdlName }}/service"
+)
+
+type {{ .MdlNameCap }}Module struct {
+}
+
+func (m *{{ .MdlNameCap }}Module) Name() string {
+	return "{{ .MdlNameCap }}"
+}
+
+func (m *{{ .MdlNameCap }}Module) Run(c *internalModels.Core) error {
+	repo := repository.NewRepository(c.DB)
+	services := service.NewService(repo)
+	h := handler.NewHandler(services)
+
+	c.Echo.GET("/{{ .MdlName }}", h.{{ .MdlNameCap }})
+	//	m.echo.GET("/{{ .MdlName }}", func(c echo.Context) error {
+	//		return c.JSON(http.StatusOK, true)
+	//	})
+
+	return nil
+}
+
+func NewModule() internalModels.Module {
+	return &{{ .MdlNameCap }}Module{}
+}

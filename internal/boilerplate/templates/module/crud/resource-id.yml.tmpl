@@ -1,0 +1,76 @@
+get:
+  tags:
+    - {{ .MdlNameCap }}
+  summary: Get item
+  description: Get an item by ID
+  # security:
+  # - BearerAuth: []
+  parameters:
+  - name: id
+    in: path
+    description: ID of item
+    required: true
+    schema:
+      type: integer
+  responses:
+    200:
+      description: success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              Data:
+                $ref: "./schemas.yml#/schemas/{{ .MdlNameCap }}"
+    404:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: "../openapi.yml#/components/schemas/NotFoundResponse"
+
+put:
+  tags:
+  - {{ .MdlNameCap }}
+  summary: Update an item
+  description: Update an item
+  parameters:
+  - name: id
+    in: path
+    description: ID of item
+    required: true
+    schema:
+      type: integer
+  requestBody:
+    description: request body
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "./schemas.yml#/schemas/Update{{ .MdlNameCap }}Request"
+  responses:
+    200:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              Data:
+                $ref: "./schemas.yml#/schemas/{{ .MdlNameCap }}"
+
+delete:
+  tags:
+  - {{ .MdlNameCap }}
+  summary: Delete item
+  description: Delete item by ID
+  parameters:
+  - name: id
+    in: path
+    description: ID of item
+    required: true
+    schema:
+      type: integer
+  responses:
+    204:
+      description: Success, no content

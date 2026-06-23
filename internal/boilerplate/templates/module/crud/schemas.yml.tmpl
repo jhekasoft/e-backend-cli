@@ -1,0 +1,27 @@
+schemas:
+  {{ .MdlNameCap }}:
+    allOf:
+      - $ref: '../openapi.yml#/components/schemas/Model'
+      - type: object
+        properties:
+          Name:
+            type: string
+            example: "Name"
+
+  Create{{ .MdlNameCap }}Request:
+    type: object
+    required:
+      - name
+    properties:
+      Name:
+        type: string
+        example: "Name"
+
+  Update{{ .MdlNameCap }}Request:
+    type: object
+    required:
+      - name
+    properties:
+      Name:
+        type: string
+        example: "Name"

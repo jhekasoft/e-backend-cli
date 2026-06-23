@@ -1,0 +1,11 @@
+//go:build {{ .MdlName }} || all
+// +build {{ .MdlName }} all
+
+package modules
+
+import "e-backend-boilerplate/modules/{{ .MdlName }}"
+
+func init() {
+	m := {{ .MdlName }}.NewModule()
+	EnabledModules = append(EnabledModules, m)
+}

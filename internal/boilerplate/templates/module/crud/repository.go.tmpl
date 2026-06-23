@@ -1,0 +1,30 @@
+package repository
+
+import (
+	"github.com/jhekasoft/e-backend/crud"
+	"e-backend-boilerplate/modules/{{ .MdlName }}/models"
+
+	"gorm.io/gorm"
+)
+
+type Repository struct {
+	crud.Repository[models.{{ .MdlNameCap }}, models.{{ .MdlNameCap }}ListFilter]
+}
+
+func NewRepository(db *gorm.DB) *Repository {
+	listOrder := "id desc"
+	var listScope crud.ListScopeFunc[models.{{ .MdlNameCap }}ListFilter] = listScope
+	return &Repository{*crud.NewRepository[models.{{ .MdlNameCap }}](db, &listScope, listOrder)}
+}
+
+func listScope(filter models.{{ .MdlNameCap }}ListFilter) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		if len(filter.Search) > 0 {
+			db.Where(
+				db.Session(&gorm.Session{}).Unscoped().
+					Where("name ILIKE ?", "%"+filter.Search+"%"),
+			)
+		}
+		return db
+	}
+}

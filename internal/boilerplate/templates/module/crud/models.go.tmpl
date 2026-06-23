@@ -1,0 +1,13 @@
+package models
+
+import "github.com/jhekasoft/e-backend/crud"
+
+type {{ .MdlNameCap }} struct {
+	crud.Model
+	Name string `gorm:"index"`
+}
+
+type {{ .MdlNameCap }}ListFilter struct {
+	crud.ListFilter
+	Search string
+}

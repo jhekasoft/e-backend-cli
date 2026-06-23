@@ -1,0 +1,36 @@
+package {{ .MdlName }}
+
+import (
+	internalModels "github.com/jhekasoft/e-backend/models"
+	"e-backend-boilerplate/modules/{{ .MdlName }}/handler"
+	"e-backend-boilerplate/modules/{{ .MdlName }}/models"
+	"e-backend-boilerplate/modules/{{ .MdlName }}/repository"
+	"e-backend-boilerplate/modules/{{ .MdlName }}/service"
+)
+
+type {{ .MdlNameCap }}Module struct {
+}
+
+func (m *{{ .MdlNameCap }}Module) Name() string {
+	return "{{ .MdlNameCap }}"
+}
+
+func (m *{{ .MdlNameCap }}Module) Run(c *internalModels.Core) error {
+	c.DB.AutoMigrate(&models.{{ .MdlNameCap }}{})
+
+	repo := repository.NewRepository(c.DB)
+	services := service.NewService(repo)
+	h := handler.NewHandler(services)
+
+	c.Echo.GET("/{{ .MdlName }}", h.GetList)
+	c.Echo.GET("/{{ .MdlName }}/:id", h.GetItem)
+	c.Echo.POST("/{{ .MdlName }}", h.CreateItem)
+	c.Echo.PUT("/{{ .MdlName }}/:id", h.UpdateItem)
+	c.Echo.DELETE("/{{ .MdlName }}/:id", h.DeleteItem)
+
+	return nil
+}
+
+func NewModule() internalModels.Module {
+	return &{{ .MdlNameCap }}Module{}
+}

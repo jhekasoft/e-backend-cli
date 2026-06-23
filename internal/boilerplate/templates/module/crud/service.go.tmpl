@@ -1,0 +1,14 @@
+package service
+
+import (
+	"github.com/jhekasoft/e-backend/crud"
+	"e-backend-boilerplate/modules/{{ .MdlName }}/models"
+)
+
+type Service struct {
+	crud.Service[models.{{ .MdlNameCap }}, models.{{ .MdlNameCap }}ListFilter]
+}
+
+func NewService(repo crud.CRUDRepository[models.{{ .MdlNameCap }}, models.{{ .MdlNameCap }}ListFilter]) *Service {
+	return &Service{*crud.NewService(repo)}
+}
