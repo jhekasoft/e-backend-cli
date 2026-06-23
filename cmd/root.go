@@ -24,6 +24,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"runtime/debug"
 
 	"github.com/spf13/cobra"
 )
@@ -32,9 +33,7 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "e-backend-cli",
 	Short: "e-backend-cli",
-	Long: `e-backend-cli
-
-Please use commands.`,
+	Long:  banner(),
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -50,12 +49,27 @@ func init() {
 	cobra.OnInitialize(printBanner)
 }
 
-func printBanner() {
-	fmt.Print(`
+func banner() string {
+	return `
 ▗▄▄▄▖▗▄▄▖  ▗▄▖  ▗▄▄▖▗▖ ▗▖▗▄▄▄▖▗▖  ▗▖▗▄▄▄ 
 ▐▌   ▐▌ ▐▌▐▌ ▐▌▐▌   ▐▌▗▞▘▐▌   ▐▛▚▖▐▌▐▌  █
 ▐▛▀▀▘▐▛▀▚▖▐▛▀▜▌▐▌   ▐▛▚▖ ▐▛▀▀▘▐▌ ▝▜▌▐▌  █
 ▐▙▄▄▖▐▙▄▞▘▐▌ ▐▌▝▚▄▄▖▐▌ ▐▌▐▙▄▄▖▐▌  ▐▌▐▙▄▄▀ CLI
+` + fmt.Sprintf("Version: %s\n\n", getVersion())
+}
 
-`)
+func printBanner() {
+	fmt.Print(banner())
+}
+
+func getVersion() (version string) {
+	version = "unknown"
+
+	if info, ok := debug.ReadBuildInfo(); ok {
+		if info.Main.Version != "" {
+			version = info.Main.Version
+		}
+	}
+
+	return
 }
