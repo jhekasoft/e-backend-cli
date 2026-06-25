@@ -1,5 +1,5 @@
 /*
-Copyright © 2025 Eugene Efremov <jhekasoft@gmail.com>
+Copyright © 2026 Eugene Efremov <jhekasoft@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,26 +22,31 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/spf13/cobra"
 )
 
-// moduleCmd represents the module command
-var moduleCmd = &cobra.Command{
-	Use:   "module",
-	Short: "Module management command",
-	Long:  `Module management command.`,
+// createCmd represents the create command
+var createCmd = &cobra.Command{
+	Use:   "create",
+	Short: "Create a new application",
+	Long:  `Create a new application.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("create called")
+	},
 }
 
 func init() {
-	rootCmd.AddCommand(moduleCmd)
+	appCmd.AddCommand(createCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// moduleCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// createCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// moduleCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// createCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

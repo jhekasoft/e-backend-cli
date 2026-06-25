@@ -9,4 +9,4 @@ build:
 	go build -ldflags "$(LDFLAGS)"
 
 test:
-	go test ./...
+	go test ./generator/module

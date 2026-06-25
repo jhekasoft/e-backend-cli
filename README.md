@@ -25,3 +25,9 @@ e-backend-cli module create [name] -t crud
 
 Where `name` is name of module is `lowerCamelCase`, `-t` is template name
 (simple, crud).
+
+## Application template generation
+
+```bash
+e-backend-cli app createTemplate -b ../e-backend-boilerplate-min -t ./generator/app/templates/simple -p e-backend-boilerplate
+```
