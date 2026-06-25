@@ -1,0 +1,37 @@
+package cmd
+
+import (
+	"{{ .PkgName }}/internal"
+	"{{ .PkgName }}/modules"
+	"log"
+
+	ebackend "github.com/jhekasoft/e-backend"
+
+	"github.com/jhekasoft/e-backend/models"
+
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+)
+
+// serveCmd represents the serve command
+var serveCmd = &cobra.Command{
+	Use:   "serve",
+	Short: "Run HTTP-server",
+	Long:  `Run HTTP-server.`,
+	Run:   runHTTPApp,
+}
+
+func init() {
+	rootCmd.AddCommand(serveCmd)
+}
+
+func runHTTPApp(cmd *cobra.Command, args []string) {
+	var conf models.Config
+	err := viper.Unmarshal(&conf)
+	if err != nil {
+		log.Fatalf("unable to decode into struct, %v", err)
+	}
+
+	app := ebackend.NewHTTPApp(conf)
+	app.Run(modules.EnabledModules, internal.Version, internal.BuildTime)
+}

@@ -24,6 +24,7 @@ package cmd
 import (
 	"fmt"
 
+	appGenerator "github.com/jhekasoft/e-backend-cli/generator/app"
 	"github.com/spf13/cobra"
 )
 
@@ -31,22 +32,33 @@ import (
 var createCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new application",
-	Long:  `Create a new application.`,
+	Long: `Create a new application from template.
+For example:
+
+e-backend-cli app create --template simple --appDir /path/to/new/app --pkgName myapp`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("create called")
+		templateName, _ := cmd.Flags().GetString("template")
+		appDir, _ := cmd.Flags().GetString("appDir")
+		pkgName, _ := cmd.Flags().GetString("pkgName")
+
+		appTemplateGenerator, err := appGenerator.NewAppGenerator()
+		cobra.CheckErr(err)
+
+		err = appTemplateGenerator.Create(templateName, appDir, pkgName)
+		cobra.CheckErr(err)
+
+		fmt.Printf("Application created successfully at: %s\n", appDir)
 	},
 }
 
 func init() {
 	appCmd.AddCommand(createCmd)
 
-	// Here you will define your flags and configuration settings.
+	createCmd.Flags().StringP("template", "t", "", `Template name for the new application (e.g., "simple")`)
+	createCmd.Flags().StringP("appDir", "a", "", "Path to the directory of the new application")
+	createCmd.Flags().StringP("pkgName", "p", "", `Application package name for replacement in the template (e.g., "myapp")`)
 
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// createCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// createCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	createCmd.MarkFlagRequired("template")
+	createCmd.MarkFlagRequired("appDir")
+	createCmd.MarkFlagRequired("pkgName")
 }

@@ -1,0 +1,53 @@
+openapi: 3.0.3
+info:
+  title: {{ .PkgName }}
+  description: {{ .PkgName }} REST API 😼 | [Documentation](/doc)
+  version: 1.0.0
+tags:
+  - name: Health
+    description: Health API
+  - name: Auth
+    description: Authorization API
+  - name: CV
+    description: Data for Curriculum vitæ (résumé)
+paths:
+  /health:
+    $ref: "health/health.yml"
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    UnauthorizedResponse:
+      type: object
+      properties:
+        Message:
+          type: string
+          example: "missing or malformed jwt"
+    NotFoundResponse:
+      type: object
+      properties:
+        Message:
+          type: string
+          example: "not found"
+    Model:
+      type: object
+      properties:
+        ID:
+          type: integer
+          format: uint32
+          example: 1
+        CreatedAt:
+          type: string
+          format: date-time
+          example: "2023-01-01T00:00:00Z"
+        UpdatedAt:
+          type: string
+          format: date-time
+          example: "2023-01-01T00:00:00Z"
+        DeletedAt:
+          type: string
+          format: date-time
+          nullable: true
+          example: "2023-01-01T00:00:00Z"

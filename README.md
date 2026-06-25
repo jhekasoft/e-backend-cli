@@ -16,6 +16,11 @@
 ```bash
 go install github.com/jhekasoft/e-backend-cli@latest
 ```
+## Application generation
+
+```bash
+e-backend-cli app create -t simple -a ../e-backend-my-app -p e-backend-my-app
+```
 
 ## Module generation
 

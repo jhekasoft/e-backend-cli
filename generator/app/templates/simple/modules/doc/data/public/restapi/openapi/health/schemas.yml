@@ -1,0 +1,13 @@
+schemas:
+  HealthResponse:
+    type: object
+    properties:
+      OK:
+        type: boolean
+        example: true
+      Version:
+        type: string
+        example: 0.0.1
+      BuildTime:
+        type: string
+        example: "2024-11-05T10:58:42+02:00"

@@ -41,10 +41,10 @@ e-backend-cli app createTemplate --boilerplateDir /path/to/boilerplate/app --tem
 		templateDir, _ := cmd.Flags().GetString("templateDir")
 		pkgName, _ := cmd.Flags().GetString("pkgName")
 
-		appTemplateGenerator, err := appGenerator.NewAppTemplateGenerator()
+		appTemplateGenerator, err := appGenerator.NewAppGenerator()
 		cobra.CheckErr(err)
 
-		err = appTemplateGenerator.Create(boilerplateDir, templateDir, pkgName)
+		err = appTemplateGenerator.CreateTemplate(boilerplateDir, templateDir, pkgName)
 		cobra.CheckErr(err)
 
 		fmt.Printf("Application template created successfully at: %s\n", templateDir)

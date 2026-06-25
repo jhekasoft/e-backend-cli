@@ -1,0 +1,72 @@
+# {{ .PkgName }}
+
+`{{ .PkgName }}` is a backend for all the projects.
+
+```
+Powered by
+▗▄▄▄▖▗▄▄▖  ▗▄▖  ▗▄▄▖▗▖ ▗▖▗▄▄▄▖▗▖  ▗▖▗▄▄▄ 
+▐▌   ▐▌ ▐▌▐▌ ▐▌▐▌   ▐▌▗▞▘▐▌   ▐▛▚▖▐▌▐▌  █
+▐▛▀▀▘▐▛▀▚▖▐▛▀▜▌▐▌   ▐▛▚▖ ▐▛▀▀▘▐▌ ▝▜▌▐▌  █
+▐▙▄▄▖▐▙▄▞▘▐▌ ▐▌▝▚▄▄▖▐▌ ▐▌▐▙▄▄▖▐▌  ▐▌▐▙▄▄▀
+```
+[e-backend](https://github.com/jhekasoft/e-backend)
+
+## Create database
+
+```bash
+sudo -iu postgres
+createdb ebackend
+```
+
+## Prepare
+
+```bash
+cp config.yaml.example config.yaml
+```
+
+And then edit `config.yaml` file.
+
+## Run HTTP-server
+
+```bash
+make run
+```
+
+## Building
+
+Build binary:
+
+```bash
+make build
+```
+
+Clean:
+
+```bash
+make clean
+```
+
+Run binary:
+
+```bash
+./build/{{ .PkgName }} serve
+```
+## Run with docker
+
+Build image:
+
+```bash
+docker build -f Dockerfile -t {{ .PkgName }} .
+```
+
+Run:
+
+```bash
+docker run --name {{ .PkgName }} --rm --network host \
+-v "$(pwd)/config.yaml:/app/config.yaml" \
+{{ .PkgName }}
+```
+
+## Module generation
+
+See [e-backend-cli](https://github.com/jhekasoft/e-backend-cli).

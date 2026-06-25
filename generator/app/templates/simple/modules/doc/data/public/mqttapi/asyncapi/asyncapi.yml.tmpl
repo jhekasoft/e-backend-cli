@@ -1,0 +1,82 @@
+asyncapi: 3.0.0
+info:
+  title: {{ .PkgName }}
+  version: 1.0.0
+  description: {{ .PkgName }} MQTT API 😼 | [Documentation](/doc)
+defaultContentType: application/json
+servers:
+  development:
+    host: 'localhost:{port}'
+    protocol: mqtt
+    description: Test broker
+    variables:
+      port:
+        description: Secure connection (TLS) is available through port 8883.
+        default: '1883'
+        enum:
+          - '1883'
+          - '8883'
+channels:
+  MeteoValue:
+    address: 'smarthome/{name1}/{name2}/{name3}/sensor/meteo'
+    messages:
+      MeteoValue:
+        $ref: '#/components/messages/MeteoValue'
+    parameters:
+      name1:
+        $ref: '#/components/parameters/name1'
+      name2:
+        $ref: '#/components/parameters/name2'
+      name3:
+        $ref: '#/components/parameters/name3'
+operations:
+  receiveMeteoValue:
+    action: receive
+    channel:
+      $ref: '#/channels/MeteoValue'
+    summary: >-
+      Inform about meteo sensor data
+    traits:
+      - $ref: '#/components/operationTraits/mqtt'
+    messages:
+      - $ref: '#/channels/MeteoValue/messages/MeteoValue'
+components:
+  messages:
+    MeteoValue:
+      payload:
+        type: object
+        properties:
+          temperature:
+            type: number
+            description: Temperature in degree Celsius (°C)
+            examples:
+              - 23.67
+          humidity:
+            type: number
+            description: Рumidity in percent (%)
+            examples:
+              - 53.45
+          pressure:
+            type: number
+            description: Pressure in hectopascal (hPa)
+            examples:
+              - 1000.05
+  parameters:
+    name1:
+      description: Name of the location.
+      examples:
+        - home
+    name2:
+      description: Name of the sub-location.
+      examples:
+        - default_floor
+    name3:
+      description: Name of the sub-sub-location.
+      examples:
+        - main_room
+  operationTraits:
+    mqtt:
+      bindings:
+        mqtt:
+          qos: 1
+
