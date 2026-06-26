@@ -8,6 +8,7 @@
 CLI for generating golang backend applications with [e-backend](https://github.com/jhekasoft/e-backend).
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/jhekasoft/e-backend-cli)](https://goreportcard.com/report/github.com/jhekasoft/e-backend-cli)
+![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/jhekasoft/e-backend-cli)
 
 ## Installation
 
