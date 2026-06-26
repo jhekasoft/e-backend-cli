@@ -43,7 +43,7 @@ For example:
 e-backend-cli module create myFirstModule`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) < 1 {
-			cobra.CheckErr(fmt.Errorf("\"module create\" needs a name for the module"))
+			checkErr(fmt.Errorf("\"module create\" needs a name for the module"))
 		}
 
 		name := args[0]
@@ -53,16 +53,16 @@ e-backend-cli module create myFirstModule`,
 
 		// Read project package name (from go.mod)
 		pkgName, err := determineProjectPackageName()
-		cobra.CheckErr(err)
+		checkErr(err)
 
 		modulesPath := "modules"
 		restDocPath := "modules/doc/data/public/restapi/openapi"
-		bp, err := moduleGenerator.NewModuleGenerator(pkgName, name, template, modulesPath, restDocPath)
-		cobra.CheckErr(err)
-		result, err := bp.Create()
-		cobra.CheckErr(err)
+		mg, err := moduleGenerator.NewModuleGenerator(pkgName, name, template, modulesPath, restDocPath)
+		checkErr(err)
+		result, err := mg.Create()
+		checkErr(err)
 
-		fmt.Println(result)
+		colorSuccess.Println(result)
 	},
 }
 

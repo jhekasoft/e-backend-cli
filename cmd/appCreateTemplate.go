@@ -22,8 +22,6 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"fmt"
-
 	appGenerator "github.com/jhekasoft/e-backend-cli/generator/app"
 	"github.com/spf13/cobra"
 )
@@ -42,12 +40,12 @@ e-backend-cli app createTemplate --boilerplateDir /path/to/boilerplate/app --tem
 		pkgName, _ := cmd.Flags().GetString("pkgName")
 
 		appTemplateGenerator, err := appGenerator.NewAppGenerator()
-		cobra.CheckErr(err)
+		checkErr(err)
 
 		err = appTemplateGenerator.CreateTemplate(boilerplateDir, templateDir, pkgName)
-		cobra.CheckErr(err)
+		checkErr(err)
 
-		fmt.Printf("Application template created successfully at: %s\n", templateDir)
+		colorSuccess.Printf("Application template created successfully at: %s\n", templateDir)
 	},
 }
 

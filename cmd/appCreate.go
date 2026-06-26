@@ -38,7 +38,7 @@ For example:
 e-backend-cli app create my-first-app`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) < 1 {
-			cobra.CheckErr(fmt.Errorf("\"application create\" needs a name for the application"))
+			checkErr(fmt.Errorf("\"application create\" needs a name for the application"))
 		}
 
 		name := args[0]
@@ -47,12 +47,12 @@ e-backend-cli app create my-first-app`,
 		fmt.Printf("Creating application '%s' with template '%s'\n", name, template)
 
 		appTemplateGenerator, err := appGenerator.NewAppGenerator()
-		cobra.CheckErr(err)
+		checkErr(err)
 
 		err = appTemplateGenerator.Create(template, name, name)
-		cobra.CheckErr(err)
+		checkErr(err)
 
-		fmt.Printf("Application created successfully at: %s\n", name)
+		colorSuccess.Printf("Application created successfully at: %s\n", name)
 	},
 }
 

@@ -25,8 +25,15 @@ import (
 	"fmt"
 	"os"
 	"runtime/debug"
+	"strings"
 
+	"github.com/fatih/color"
 	"github.com/spf13/cobra"
+)
+
+var (
+	colorSuccess = color.New(color.FgHiGreen)
+	colorError   = color.New(color.FgHiRed)
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -50,12 +57,18 @@ func init() {
 }
 
 func banner() string {
-	return `
+	cBlue := color.New(color.FgBlue)
+	cYellow := color.New(color.FgYellow)
+	cHiBlue := color.New(color.FgHiBlue)
+	banner := cBlue.Sprintf(`
 ▗▄▄▄▖▗▄▄▖  ▗▄▖  ▗▄▄▖▗▖ ▗▖▗▄▄▄▖▗▖  ▗▖▗▄▄▄ 
-▐▌   ▐▌ ▐▌▐▌ ▐▌▐▌   ▐▌▗▞▘▐▌   ▐▛▚▖▐▌▐▌  █
+▐▌   ▐▌ ▐▌▐▌ ▐▌▐▌   ▐▌▗▞▘▐▌   ▐▛▚▖▐▌▐▌  █`) + cYellow.Sprintf(`
 ▐▛▀▀▘▐▛▀▚▖▐▛▀▜▌▐▌   ▐▛▚▖ ▐▛▀▀▘▐▌ ▝▜▌▐▌  █
-▐▙▄▄▖▐▙▄▞▘▐▌ ▐▌▝▚▄▄▖▐▌ ▐▌▐▙▄▄▖▐▌  ▐▌▐▙▄▄▀ CLI
-` + fmt.Sprintf("Version: %s\n\n", getVersion())
+▐▙▄▄▖▐▙▄▞▘▐▌ ▐▌▝▚▄▄▖▐▌ ▐▌▐▙▄▄▖▐▌  ▐▌▐▙▄▄▀`) + " CLI\n" +
+		cHiBlue.Sprintf("Version: %s", getVersion())
+
+	// Remove the first newline for better formatting
+	return strings.Replace(banner, "\n", "", 1)
 }
 
 func printBanner() {
@@ -72,4 +85,13 @@ func getVersion() (version string) {
 	}
 
 	return
+}
+
+// checkErr prints the msg with the prefix 'Error:' and exits with error code 1.
+// If the msg is nil, it does nothing.
+func checkErr(msg interface{}) {
+	if msg != nil {
+		colorError.Fprintln(os.Stderr, "Error:", msg)
+		os.Exit(1)
+	}
 }
