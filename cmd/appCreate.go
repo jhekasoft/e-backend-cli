@@ -39,7 +39,7 @@ For example:
 e-backend-cli app create my-first-app`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) < 1 {
-			checkErr(fmt.Errorf("\"application create\" needs a name for the application"))
+			checkErr(fmt.Errorf("\"app create\" needs a name for the application"))
 		}
 
 		name := args[0]
