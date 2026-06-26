@@ -1,14 +1,13 @@
 # e-backend-cli
 
-[e-backend](https://github.com/jhekasoft/e-backend) CLI for generating golang backend applications.
-
-![cat](./assets/android-chrome-192x192.png)
-
 ```
 ░█▀▀░█▀▄░█▀█░█▀▀░█░█░█▀▀░█▀█░█▀▄
 ░█▀▀░█▀▄░█▀█░█░░░█▀▄░█▀▀░█░█░█░█
 ░▀▀▀░▀▀░░▀░▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀CLI
 ```
+CLI for generating golang backend applications with [e-backend](https://github.com/jhekasoft/e-backend).
+
+[![Go Report Card](https://goreportcard.com/badge/github.com/jhekasoft/e-backend-cli)](https://goreportcard.com/report/github.com/jhekasoft/e-backend-cli)
 
 ## Installation
 
