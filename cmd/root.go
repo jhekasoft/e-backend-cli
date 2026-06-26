@@ -57,22 +57,21 @@ func init() {
 }
 
 func banner() string {
-	cBlue := color.New(color.FgBlue)
-	cYellow := color.New(color.FgYellow)
-	cHiBlue := color.New(color.FgHiBlue)
-	banner := cBlue.Sprintf(`
+	cLogo := color.New(color.FgBlue)
+	cLogo2 := color.New(color.FgYellow)
+	banner := cLogo.Sprintf(`
 ▗▄▄▄▖▗▄▄▖  ▗▄▖  ▗▄▄▖▗▖ ▗▖▗▄▄▄▖▗▖  ▗▖▗▄▄▄ 
-▐▌   ▐▌ ▐▌▐▌ ▐▌▐▌   ▐▌▗▞▘▐▌   ▐▛▚▖▐▌▐▌  █`) + cYellow.Sprintf(`
+▐▌   ▐▌ ▐▌▐▌ ▐▌▐▌   ▐▌▗▞▘▐▌   ▐▛▚▖▐▌▐▌  █
 ▐▛▀▀▘▐▛▀▚▖▐▛▀▜▌▐▌   ▐▛▚▖ ▐▛▀▀▘▐▌ ▝▜▌▐▌  █
-▐▙▄▄▖▐▙▄▞▘▐▌ ▐▌▝▚▄▄▖▐▌ ▐▌▐▙▄▄▖▐▌  ▐▌▐▙▄▄▀`) + " CLI\n" +
-		cHiBlue.Sprintf("Version: %s", getVersion())
+▐▙▄▄▖▐▙▄▞▘▐▌ ▐▌▝▚▄▄▖▐▌ ▐▌▐▙▄▄▖▐▌  ▐▌▐▙▄▄▀`) + cLogo2.Sprintf(" CLI\n") +
+		cLogo2.Sprintf("Version: %s", getVersion())
 
 	// Remove the first newline for better formatting
 	return strings.Replace(banner, "\n", "", 1)
 }
 
 func printBanner() {
-	fmt.Print(banner())
+	fmt.Print(banner() + "\n\n")
 }
 
 func getVersion() (version string) {
