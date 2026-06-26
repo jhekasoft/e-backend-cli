@@ -25,22 +25,18 @@ import (
 	"fmt"
 	"os"
 	"runtime/debug"
-	"strings"
 
-	"github.com/fatih/color"
+	eCmd "github.com/jhekasoft/e-backend/cmd"
 	"github.com/spf13/cobra"
 )
 
-var (
-	colorSuccess = color.New(color.FgHiGreen)
-	colorError   = color.New(color.FgHiRed)
-)
+const subtitle = "CLI"
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "e-backend-cli",
 	Short: "e-backend-cli",
-	Long:  banner(),
+	Long:  eCmd.Banner(subtitle, getVersion(), "2026-06-26T20:15:46+03:00"),
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -56,22 +52,8 @@ func init() {
 	cobra.OnInitialize(printBanner)
 }
 
-func banner() string {
-	cLogo := color.New(color.FgBlue)
-	cLogo2 := color.New(color.FgYellow)
-	banner := cLogo.Sprintf(`
-▗▄▄▄▖▗▄▄▖  ▗▄▖  ▗▄▄▖▗▖ ▗▖▗▄▄▄▖▗▖  ▗▖▗▄▄▄ 
-▐▌   ▐▌ ▐▌▐▌ ▐▌▐▌   ▐▌▗▞▘▐▌   ▐▛▚▖▐▌▐▌  █
-▐▛▀▀▘▐▛▀▚▖▐▛▀▜▌▐▌   ▐▛▚▖ ▐▛▀▀▘▐▌ ▝▜▌▐▌  █
-▐▙▄▄▖▐▙▄▞▘▐▌ ▐▌▝▚▄▄▖▐▌ ▐▌▐▙▄▄▖▐▌  ▐▌▐▙▄▄▀`) + cLogo2.Sprintf(" CLI\n") +
-		cLogo2.Sprintf("Version: %s", getVersion())
-
-	// Remove the first newline for better formatting
-	return strings.Replace(banner, "\n", "", 1)
-}
-
 func printBanner() {
-	fmt.Print(banner() + "\n\n")
+	fmt.Print(eCmd.Banner(subtitle, getVersion(), "2026-06-26T20:15:46+03:00") + "\n\n")
 }
 
 func getVersion() (version string) {
@@ -90,7 +72,7 @@ func getVersion() (version string) {
 // If the msg is nil, it does nothing.
 func checkErr(msg interface{}) {
 	if msg != nil {
-		colorError.Fprintln(os.Stderr, "Error:", msg)
+		eCmd.ColorError.Fprintln(os.Stderr, "Error:", msg)
 		os.Exit(1)
 	}
 }

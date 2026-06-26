@@ -23,6 +23,7 @@ package cmd
 
 import (
 	appGenerator "github.com/jhekasoft/e-backend-cli/generator/app"
+	eCmd "github.com/jhekasoft/e-backend/cmd"
 	"github.com/spf13/cobra"
 )
 
@@ -45,7 +46,7 @@ e-backend-cli app createTemplate --boilerplateDir /path/to/boilerplate/app --tem
 		err = appTemplateGenerator.CreateTemplate(boilerplateDir, templateDir, pkgName)
 		checkErr(err)
 
-		colorSuccess.Printf("Application template created successfully at: %s\n", templateDir)
+		eCmd.ColorSuccess.Printf("Application template created successfully at: %s\n", templateDir)
 	},
 }
 

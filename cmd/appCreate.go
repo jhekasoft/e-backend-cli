@@ -25,6 +25,7 @@ import (
 	"fmt"
 
 	appGenerator "github.com/jhekasoft/e-backend-cli/generator/app"
+	eCmd "github.com/jhekasoft/e-backend/cmd"
 	"github.com/spf13/cobra"
 )
 
@@ -52,7 +53,7 @@ e-backend-cli app create my-first-app`,
 		err = appTemplateGenerator.Create(template, name, name)
 		checkErr(err)
 
-		colorSuccess.Printf("Application created successfully at: %s\n", name)
+		eCmd.ColorSuccess.Printf("Application created successfully at: %s\n", name)
 	},
 }
 

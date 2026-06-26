@@ -31,6 +31,7 @@ import (
 	"golang.org/x/mod/modfile"
 
 	moduleGenerator "github.com/jhekasoft/e-backend-cli/generator/module"
+	eCmd "github.com/jhekasoft/e-backend/cmd"
 )
 
 // moduleCreateCmd represents the moduleCreate command
@@ -62,7 +63,7 @@ e-backend-cli module create myFirstModule`,
 		result, err := mg.Create()
 		checkErr(err)
 
-		colorSuccess.Println(result)
+		eCmd.ColorSuccess.Println(result)
 	},
 }
 
