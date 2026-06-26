@@ -35,30 +35,29 @@ var createCmd = &cobra.Command{
 	Long: `Create a new application from template.
 For example:
 
-e-backend-cli app create --template simple --appDir /path/to/new/app --pkgName myapp`,
+e-backend-cli app create my-first-app`,
 	Run: func(cmd *cobra.Command, args []string) {
-		templateName, _ := cmd.Flags().GetString("template")
-		appDir, _ := cmd.Flags().GetString("appDir")
-		pkgName, _ := cmd.Flags().GetString("pkgName")
+		if len(args) < 1 {
+			cobra.CheckErr(fmt.Errorf("\"application create\" needs a name for the application"))
+		}
+
+		name := args[0]
+		template, _ := cmd.Flags().GetString("template")
+
+		fmt.Printf("Creating application '%s' with template '%s'\n", name, template)
 
 		appTemplateGenerator, err := appGenerator.NewAppGenerator()
 		cobra.CheckErr(err)
 
-		err = appTemplateGenerator.Create(templateName, appDir, pkgName)
+		err = appTemplateGenerator.Create(template, name, name)
 		cobra.CheckErr(err)
 
-		fmt.Printf("Application created successfully at: %s\n", appDir)
+		fmt.Printf("Application created successfully at: %s\n", name)
 	},
 }
 
 func init() {
 	appCmd.AddCommand(createCmd)
 
-	createCmd.Flags().StringP("template", "t", "", `Template name for the new application (e.g., "simple")`)
-	createCmd.Flags().StringP("appDir", "a", "", "Path to the directory of the new application")
-	createCmd.Flags().StringP("pkgName", "p", "", `Application package name for replacement in the template (e.g., "myapp")`)
-
-	createCmd.MarkFlagRequired("template")
-	createCmd.MarkFlagRequired("appDir")
-	createCmd.MarkFlagRequired("pkgName")
+	createCmd.Flags().StringP("template", "t", "simple", `Template name for the new application (e.g., "simple")`)
 }

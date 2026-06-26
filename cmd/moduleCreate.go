@@ -37,7 +37,10 @@ import (
 var moduleCreateCmd = &cobra.Command{
 	Use:   "create [name]",
 	Short: "Create a new module",
-	Long:  `Create a new module.`,
+	Long: `Create a new module.
+For example:
+
+e-backend-cli module create myFirstModule`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) < 1 {
 			cobra.CheckErr(fmt.Errorf("\"module create\" needs a name for the module"))
