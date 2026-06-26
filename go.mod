@@ -3,7 +3,7 @@ module github.com/jhekasoft/e-backend-cli
 go 1.26.4
 
 require (
-	github.com/jhekasoft/e-backend v0.7.1
+	github.com/jhekasoft/e-backend v0.7.2
 	github.com/labstack/echo/v4 v4.12.0
 	github.com/spf13/cobra v1.10.2
 	golang.org/x/mod v0.37.0

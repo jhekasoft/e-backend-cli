@@ -41,10 +41,10 @@ e-backend-cli app createTemplate --boilerplateDir /path/to/boilerplate/app --tem
 		pkgName, _ := cmd.Flags().GetString("pkgName")
 
 		appTemplateGenerator, err := appGenerator.NewAppGenerator()
-		checkErr(err)
+		eCmd.CheckErr(err)
 
 		err = appTemplateGenerator.CreateTemplate(boilerplateDir, templateDir, pkgName)
-		checkErr(err)
+		eCmd.CheckErr(err)
 
 		eCmd.ColorSuccess.Printf("Application template created successfully at: %s\n", templateDir)
 	},

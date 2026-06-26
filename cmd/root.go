@@ -67,12 +67,3 @@ func getVersion() (version string) {
 
 	return
 }
-
-// checkErr prints the msg with the prefix 'Error:' and exits with error code 1.
-// If the msg is nil, it does nothing.
-func checkErr(msg interface{}) {
-	if msg != nil {
-		eCmd.ColorError.Fprintln(os.Stderr, "Error:", msg)
-		os.Exit(1)
-	}
-}

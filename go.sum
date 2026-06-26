@@ -34,6 +34,8 @@ github.com/jhekasoft/e-backend v0.7.0 h1:Uni9zimCEB2EAhy67SexvRaevRSZHZDaiIIUgNW
 github.com/jhekasoft/e-backend v0.7.0/go.mod h1:l/cjeiQqCj/F47qZFb+wm16cR99xRqzRu/8k8q2mNxg=
 github.com/jhekasoft/e-backend v0.7.1 h1:hCgXHGaTBmRsHCZesj212q8l3DI0D0P6zxkM61ZS8Iw=
 github.com/jhekasoft/e-backend v0.7.1/go.mod h1:l/cjeiQqCj/F47qZFb+wm16cR99xRqzRu/8k8q2mNxg=
+github.com/jhekasoft/e-backend v0.7.2 h1:D63fiaUbuO8LBgqqJhdhavBtsA4OJU1FbPk/CXGSty0=
+github.com/jhekasoft/e-backend v0.7.2/go.mod h1:l/cjeiQqCj/F47qZFb+wm16cR99xRqzRu/8k8q2mNxg=
 github.com/jinzhu/inflection v1.0.0 h1:K317FqzuhWc8YvSVlFMCCUb36O/S9MCKRDI7QkRKD/E=
 github.com/jinzhu/inflection v1.0.0/go.mod h1:h+uFLlag+Qp1Va5pdKtLDYj+kHp5pxUVkryuEj+Srlc=
 github.com/jinzhu/now v1.1.5 h1:/o9tlHleP7gOFmsnYNz3RGnqzefHA47wQpKrrdTIwXQ=

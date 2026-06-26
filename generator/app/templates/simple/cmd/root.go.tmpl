@@ -7,19 +7,20 @@ import (
 
 	"github.com/jhekasoft/e-backend/models"
 
+	eCmd "github.com/jhekasoft/e-backend/cmd"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
+
+const subtitle = "{{ .PkgName }}"
 
 var cfgFile string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "{{ .PkgName }}",
-	Short: "{{ .PkgName }} service",
-	Long: `{{ .PkgName }} service
-
-Please use commands.`,
+	Short: "{{ .PkgName }}",
+	Long:  eCmd.Banner(subtitle, internal.Version, internal.BuildTime),
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -33,16 +34,7 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(printBanner, initConfig)
-
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/config.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	// rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -68,9 +60,6 @@ func initConfig() {
 	// Defaults
 	viper.SetDefault("Mode", models.AppModeProduction)
 	viper.SetDefault("HTTP", models.ConfigHTTP{Port: 1988, BaseURL: "http://localhost:1988"})
-	viper.SetDefault("MQTT.Enabled", false)
-	viper.SetDefault("MQTT.Host", "localhost")
-	viper.SetDefault("MQTT.Port", 1883)
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
@@ -79,14 +68,5 @@ func initConfig() {
 }
 
 func printBanner() {
-	fmt.Print(`
-▗▄▄▄▖▗▄▄▖  ▗▄▖  ▗▄▄▖▗▖ ▗▖▗▄▄▄▖▗▖  ▗▖▗▄▄▄ 
-▐▌   ▐▌ ▐▌▐▌ ▐▌▐▌   ▐▌▗▞▘▐▌   ▐▛▚▖▐▌▐▌  █
-▐▛▀▀▘▐▛▀▚▖▐▛▀▜▌▐▌   ▐▛▚▖ ▐▛▀▀▘▐▌ ▝▜▌▐▌  █
-▐▙▄▄▖▐▙▄▞▘▐▌ ▐▌▝▚▄▄▖▐▌ ▐▌▐▙▄▄▖▐▌  ▐▌▐▙▄▄▀
-
-`)
-
-	fmt.Printf("Version: %s\n", internal.Version)
-	fmt.Printf("Build time: %s\n", internal.BuildTime)
+	fmt.Print(eCmd.Banner(subtitle, internal.Version, internal.BuildTime) + "\n\n")
 }
