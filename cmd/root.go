@@ -36,7 +36,7 @@ const subtitle = "CLI"
 var rootCmd = &cobra.Command{
 	Use:   "e-backend-cli",
 	Short: "e-backend-cli",
-	Long:  eCmd.Banner(subtitle, getVersion(), "2026-06-26T20:15:46+03:00"),
+	Long:  eCmd.Banner(subtitle, getVersion(), ""),
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -53,7 +53,7 @@ func init() {
 }
 
 func printBanner() {
-	fmt.Print(eCmd.Banner(subtitle, getVersion(), "2026-06-26T20:15:46+03:00") + "\n\n")
+	fmt.Print(eCmd.Banner(subtitle, getVersion(), "") + "\n\n")
 }
 
 func getVersion() (version string) {
