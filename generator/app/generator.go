@@ -29,8 +29,10 @@ func NewAppGenerator() (AppGenerator, error) {
 	return &AppGeneratorBasic{}, nil
 }
 
+// CreateTemplate creates a new application template from the specified
+// boilerplate and writes it to the specified directory.
 func (b *AppGeneratorBasic) CreateTemplate(boilerplateDir, templateDir, pkgName string) error {
-	return b.Transform(
+	return b.transform(
 		nil,
 		boilerplateDir,
 		templateDir,
@@ -45,6 +47,8 @@ func (b *AppGeneratorBasic) CreateTemplate(boilerplateDir, templateDir, pkgName 
 	)
 }
 
+// Create creates a new application from the specified template and writes it
+// to the specified directory.
 func (b *AppGeneratorBasic) Create(templateName, appDir, pkgName string) error {
 	templatesFS, err := fs.Sub(templatesFiles, "templates")
 	if err != nil {
@@ -53,7 +57,7 @@ func (b *AppGeneratorBasic) Create(templateName, appDir, pkgName string) error {
 
 	templateDir := templateName
 
-	return b.Transform(
+	return b.transform(
 		templatesFS,
 		templateDir,
 		appDir,
@@ -65,7 +69,7 @@ func (b *AppGeneratorBasic) Create(templateName, appDir, pkgName string) error {
 	)
 }
 
-func (b *AppGeneratorBasic) Transform(
+func (b *AppGeneratorBasic) transform(
 	sourceFS fs.FS,
 	sourceDir string,
 	destinationDir string,
