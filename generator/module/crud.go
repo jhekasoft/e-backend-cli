@@ -9,53 +9,68 @@ type CRUDModuleGenerator struct {
 	CommonModuleGenerator
 }
 
-func (b *CRUDModuleGenerator) Create() (string, error) {
+func (g *CRUDModuleGenerator) Create() (string, error) {
 	tmplTypeName := "crud"
-	err := b.CommonCreate(tmplTypeName)
+	err := g.CommonCreate(tmplTypeName)
 	if err != nil {
 		return "", err
 	}
+
+	result := "Created without REST docs."
 
 	// Create REST docs
-	err = b.CreateRESTDocDir()
-	if err != nil {
-		return "", err
+	if g.RESTDocPath != "" {
+		err = g.createRESTDocs(tmplTypeName)
+		if err != nil {
+			return "", err
+		}
+
+		result = "Created with REST docs."
 	}
 
-	tmplData := NewModuleTmplData(b.PkgName, b.Name)
+	return result, nil
+}
+
+func (g *CRUDModuleGenerator) createRESTDocs(tmplTypeName string) error {
+	err := g.CreateRESTDocDir()
+	if err != nil {
+		return err
+	}
+
+	tmplData := NewModuleTmplData(g.PkgName, g.Name)
 
 	schemasTmplPath := path.Join(tmplTypeName, "schemas.yml.tmpl")
-	schemasFilePath := path.Join(b.GetModuleRESTDocPath(), "schemas.yml")
-	err = b.CreateFileFromTemplate(schemasTmplPath, schemasFilePath, tmplData)
+	schemasFilePath := path.Join(g.GetModuleRESTDocPath(), "schemas.yml")
+	err = g.CreateFileFromTemplate(schemasTmplPath, schemasFilePath, tmplData)
 	if err != nil {
-		return "", err
+		return err
 	}
 
 	resourceTmplPath := path.Join(tmplTypeName, "resource.yml.tmpl")
-	resourceFilePath := path.Join(b.GetModuleRESTDocPath(), fmt.Sprintf("%s.yml", b.Name))
-	err = b.CreateFileFromTemplate(resourceTmplPath, resourceFilePath, tmplData)
+	resourceFilePath := path.Join(g.GetModuleRESTDocPath(), fmt.Sprintf("%s.yml", g.Name))
+	err = g.CreateFileFromTemplate(resourceTmplPath, resourceFilePath, tmplData)
 	if err != nil {
-		return "", err
+		return err
 	}
 
 	resourceIDTmplPath := path.Join(tmplTypeName, "resource-id.yml.tmpl")
-	resourceIDFilePath := path.Join(b.GetModuleRESTDocPath(), fmt.Sprintf("%s-id.yml", b.Name))
-	err = b.CreateFileFromTemplate(resourceIDTmplPath, resourceIDFilePath, tmplData)
+	resourceIDFilePath := path.Join(g.GetModuleRESTDocPath(), fmt.Sprintf("%s-id.yml", g.Name))
+	err = g.CreateFileFromTemplate(resourceIDTmplPath, resourceIDFilePath, tmplData)
 	if err != nil {
-		return "", err
+		return err
 	}
 
 	openAPIPartPath := path.Join(tmplTypeName, "openapi-part.yml.tmpl")
-	openAPIPartRes, err := b.RenderFromTemplate(openAPIPartPath, tmplData)
+	openAPIPartRes, err := g.RenderFromTemplate(openAPIPartPath, tmplData)
 	if err != nil {
-		return "", err
+		return err
 	}
 
-	result := fmt.Sprintf(
-		"Created.\nPlease add strings below to the openapi.yml "+
-			"for the REST API doc:\n\n%s",
-		openAPIPartRes,
-	)
+	// Write new paths to the openapi.yml file
+	err = g.AppendRESTDocPaths(openAPIPartRes)
+	if err != nil {
+		return err
+	}
 
-	return result, nil
+	return nil
 }

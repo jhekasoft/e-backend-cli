@@ -57,7 +57,13 @@ e-backend-cli module create myFirstModule`,
 		eCmd.CheckErr(err)
 
 		modulesPath := "modules"
-		restDocPath := "modules/doc/data/public/restapi/openapi"
+
+		// REST documentation path (if withDocs is true)
+		restDocPath := ""
+		if withDocs, _ := cmd.Flags().GetBool("withDocs"); withDocs {
+			restDocPath = "modules/doc/data/public/restapi/openapi"
+		}
+
 		mg, err := moduleGenerator.NewModuleGenerator(pkgName, name, template, modulesPath, restDocPath)
 		eCmd.CheckErr(err)
 		result, err := mg.Create()
@@ -72,6 +78,9 @@ func init() {
 
 	moduleCreateCmd.Flags().StringP("template", "t", "simple", `A module template to use.
 Available templates: simple, crud.`,
+	)
+	moduleCreateCmd.Flags().BoolP("withDocs", "d", true, `Generate REST documentation for the module.
+If set to false, no REST documentation will be generated.`,
 	)
 }
 

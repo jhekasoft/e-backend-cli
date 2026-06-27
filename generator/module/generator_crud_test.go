@@ -13,12 +13,29 @@ func TestCRUDModuleGenerator_Success(t *testing.T) {
 	tmp := t.TempDir()
 	modulesPath := filepath.Join(tmp, "modules")
 	restDocPath := filepath.Join(modulesPath, "doc", "data", "public", "restapi", "openapi")
+	openAPIFilePath := filepath.Join(restDocPath, "openapi.yml")
 
 	if err := os.MkdirAll(modulesPath, 0755); err != nil {
 		t.Fatal(err)
 	}
 	if err := os.MkdirAll(restDocPath, 0755); err != nil {
 		t.Fatal(err)
+	}
+	openAPIFileContents := []byte(`openapi: 3.0.3
+info:
+  title: e-backend-app
+  version: 1.0.0
+paths:
+  /health:
+    $ref: "health/health.yml"
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer"
+`)
+	if err := os.WriteFile(openAPIFilePath, openAPIFileContents, 0o644); err != nil {
+		t.Fatalf("write openapi.yml file: %v", err)
 	}
 
 	pkgName := "github.com/example/project"
@@ -34,11 +51,8 @@ func TestCRUDModuleGenerator_Success(t *testing.T) {
 		t.Fatalf("Create error: %v", err)
 	}
 
-	if !strings.Contains(res, "Created.") {
+	if !strings.Contains(res, "Created with REST docs.") {
 		t.Fatalf("unexpected result: %q", res)
-	}
-	if !strings.Contains(res, "Please add strings below to the openapi.yml") {
-		t.Fatalf("expected openapi hint in result, got: %q", res)
 	}
 
 	restDocDir := filepath.Join(restDocPath, modName)
@@ -54,6 +68,32 @@ func TestCRUDModuleGenerator_Success(t *testing.T) {
 		if _, err := os.Stat(p); os.IsNotExist(err) {
 			t.Fatalf("expected rest doc file not created: %s", p)
 		}
+	}
+
+	bOpenAPI, err := os.ReadFile(openAPIFilePath)
+	if err != nil {
+		t.Fatalf("read openapi.yml file: %v", err)
+	}
+
+	expectedOpenAPIContent := `openapi: 3.0.3
+info:
+  title: e-backend-app
+  version: 1.0.0
+paths:
+  /health:
+    $ref: "health/health.yml"
+  /example:
+    $ref: "example/example.yml"
+  /example/{id}:
+    $ref: "example/example-id.yml"
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer"
+`
+	if !strings.Contains(string(bOpenAPI), expectedOpenAPIContent) {
+		t.Fatalf("openapi.yml file does not contain expected content:\n%s", string(bOpenAPI))
 	}
 
 	b, err := os.ReadFile(resource)

@@ -7,6 +7,7 @@ import (
 	"io/fs"
 	"os"
 	"path"
+	"strings"
 	"text/template"
 
 	"golang.org/x/text/cases"
@@ -46,29 +47,29 @@ type CommonModuleGenerator struct {
 	RESTDocPath string
 }
 
-func (b *CommonModuleGenerator) GetModulePath() string {
-	return path.Join(b.ModulesPath, b.Name)
+func (g *CommonModuleGenerator) GetModulePath() string {
+	return path.Join(g.ModulesPath, g.Name)
 }
 
-func (b *CommonModuleGenerator) GetModuleRESTDocPath() string {
-	return path.Join(b.RESTDocPath, b.Name)
+func (g *CommonModuleGenerator) GetModuleRESTDocPath() string {
+	return path.Join(g.RESTDocPath, g.Name)
 }
 
-func (b *CommonModuleGenerator) CommonCreate(tmplTypeName string) error {
+func (g *CommonModuleGenerator) CommonCreate(tmplTypeName string) error {
 	// Create init file
-	err := b.CreateInitFile()
+	err := g.CreateInitFile()
 	if err != nil {
 		return err
 	}
 
 	// Create module directory
-	err = b.CreateModuleDir()
+	err = g.CreateModuleDir()
 	if err != nil {
 		return err
 	}
 
 	// Create module file
-	err = b.CreateModuleFile(tmplTypeName)
+	err = g.CreateModuleFile(tmplTypeName)
 	if err != nil {
 		return err
 	}
@@ -76,14 +77,14 @@ func (b *CommonModuleGenerator) CommonCreate(tmplTypeName string) error {
 	// Create directories and files from templates in the module
 	dirs := []string{"models", "repository", "service", "handler"}
 	for _, dir := range dirs {
-		err = b.CreateInModuleDir(dir)
+		err = g.CreateInModuleDir(dir)
 		if err != nil {
 			return err
 		}
 
 		tmplPath := path.Join(tmplTypeName, fmt.Sprintf("%s.go.tmpl", dir))
-		filePath := path.Join(b.GetModulePath(), dir, fmt.Sprintf("%s.go", dir))
-		err = b.CreateFileFromTemplate(tmplPath, filePath, NewModuleTmplData(b.PkgName, b.Name))
+		filePath := path.Join(g.GetModulePath(), dir, fmt.Sprintf("%s.go", dir))
+		err = g.CreateFileFromTemplate(tmplPath, filePath, NewModuleTmplData(g.PkgName, g.Name))
 		if err != nil {
 			return err
 		}
@@ -92,17 +93,17 @@ func (b *CommonModuleGenerator) CommonCreate(tmplTypeName string) error {
 	return nil
 }
 
-func (b *CommonModuleGenerator) CreateInitFile() error {
+func (g *CommonModuleGenerator) CreateInitFile() error {
 	initTmplPath := "init.go.tmpl"
-	initFilePath := path.Join(b.ModulesPath, fmt.Sprintf("%s.go", b.Name))
-	data := InitModuleTmplData{PkgName: b.PkgName, MdlName: b.Name}
+	initFilePath := path.Join(g.ModulesPath, fmt.Sprintf("%s.go", g.Name))
+	data := InitModuleTmplData{PkgName: g.PkgName, MdlName: g.Name}
 
-	return b.CreateFileFromTemplate(initTmplPath, initFilePath, data)
+	return g.CreateFileFromTemplate(initTmplPath, initFilePath, data)
 }
 
-func (b *CommonModuleGenerator) CreateModuleDir() error {
+func (g *CommonModuleGenerator) CreateModuleDir() error {
 	// Create module directory
-	modulePath := b.GetModulePath()
+	modulePath := g.GetModulePath()
 	if _, err := os.Stat(modulePath); os.IsNotExist(err) {
 		// create directory
 		if err := os.Mkdir(modulePath, 0754); err != nil {
@@ -113,9 +114,9 @@ func (b *CommonModuleGenerator) CreateModuleDir() error {
 	return nil
 }
 
-func (b *CommonModuleGenerator) CreateInModuleDir(name string) error {
+func (g *CommonModuleGenerator) CreateInModuleDir(name string) error {
 	// Create directory in the module
-	inModulePath := path.Join(b.GetModulePath(), name)
+	inModulePath := path.Join(g.GetModulePath(), name)
 	if _, err := os.Stat(inModulePath); os.IsNotExist(err) {
 		// create directory
 		if err := os.Mkdir(inModulePath, 0754); err != nil {
@@ -126,21 +127,21 @@ func (b *CommonModuleGenerator) CreateInModuleDir(name string) error {
 	return nil
 }
 
-func (b *CommonModuleGenerator) CreateModuleFile(tmplTypeName string) error {
+func (g *CommonModuleGenerator) CreateModuleFile(tmplTypeName string) error {
 	moduleTmplPath := path.Join(tmplTypeName, "module.go.tmpl")
-	moduleFilePath := path.Join(b.GetModulePath(), fmt.Sprintf("%s.go", b.Name))
+	moduleFilePath := path.Join(g.GetModulePath(), fmt.Sprintf("%s.go", g.Name))
 
-	return b.CreateFileFromTemplate(moduleTmplPath, moduleFilePath, NewModuleTmplData(b.PkgName, b.Name))
+	return g.CreateFileFromTemplate(moduleTmplPath, moduleFilePath, NewModuleTmplData(g.PkgName, g.Name))
 }
 
-func (b *CommonModuleGenerator) CreateFileFromTemplate(templateFilePath, filePath string, data any) error {
+func (g *CommonModuleGenerator) CreateFileFromTemplate(templateFilePath, filePath string, data any) error {
 	file, err := os.Create(filePath)
 	if err != nil {
 		return err
 	}
 	defer file.Close()
 
-	tmpl, err := template.ParseFS(b.TemplatesFS, templateFilePath)
+	tmpl, err := template.ParseFS(g.TemplatesFS, templateFilePath)
 	if err != nil {
 		return err
 	}
@@ -160,8 +161,8 @@ func (b *CommonModuleGenerator) CreateFileFromTemplate(templateFilePath, filePat
 	return nil
 }
 
-func (b *CommonModuleGenerator) RenderFromTemplate(templateFilePath string, data any) (string, error) {
-	tmpl, err := template.ParseFS(b.TemplatesFS, templateFilePath)
+func (g *CommonModuleGenerator) RenderFromTemplate(templateFilePath string, data any) (string, error) {
+	tmpl, err := template.ParseFS(g.TemplatesFS, templateFilePath)
 	if err != nil {
 		return "", err
 	}
@@ -193,9 +194,9 @@ func NewModuleTmplData(pkgName, name string) ModuleTmplData {
 	}
 }
 
-func (b *CommonModuleGenerator) CreateRESTDocDir() error {
+func (g *CommonModuleGenerator) CreateRESTDocDir() error {
 	// Create module directory
-	restDocPath := b.GetModuleRESTDocPath()
+	restDocPath := g.GetModuleRESTDocPath()
 	if _, err := os.Stat(restDocPath); os.IsNotExist(err) {
 		// create directory
 		if err := os.Mkdir(restDocPath, 0754); err != nil {
@@ -204,4 +205,60 @@ func (b *CommonModuleGenerator) CreateRESTDocDir() error {
 	}
 
 	return nil
+}
+
+func (g *CommonModuleGenerator) AppendRESTDocPaths(yamlPathsFragment string) error {
+	openAPIPath := path.Join(g.RESTDocPath, "openapi.yml")
+
+	data, err := os.ReadFile(openAPIPath)
+	if err != nil {
+		return err
+	}
+
+	lines := strings.Split(string(data), "\n")
+
+	pathsIdx := -1
+	for i, line := range lines {
+		if strings.TrimSpace(line) == "paths:" {
+			pathsIdx = i
+			break
+		}
+	}
+
+	if pathsIdx == -1 {
+		return fmt.Errorf("paths section not found")
+	}
+
+	insertIdx := len(lines)
+
+	for i := pathsIdx + 1; i < len(lines); i++ {
+		line := lines[i]
+
+		if strings.TrimSpace(line) == "" {
+			continue
+		}
+
+		// Found next top-level section.
+		if !strings.HasPrefix(line, " ") &&
+			!strings.HasPrefix(line, "\t") {
+			insertIdx = i
+			break
+		}
+	}
+
+	fragmentLines := strings.Split(
+		strings.TrimRight(yamlPathsFragment, "\n"),
+		"\n",
+	)
+
+	newLines := append(
+		lines[:insertIdx],
+		append(fragmentLines, lines[insertIdx:]...)...,
+	)
+
+	return os.WriteFile(
+		openAPIPath,
+		[]byte(strings.Join(newLines, "\n")),
+		0644,
+	)
 }
